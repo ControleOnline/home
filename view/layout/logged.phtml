@@ -1,0 +1,372 @@
+<aside class="app-sidebar" id="sidebar">
+    <div class="sidebar-header">
+        <a class="sidebar-brand" href="<?= ($this->defaultCompany && $this->userModel->getUserCompany() && $this->userModel->getUserCompany()->getId() === $this->defaultCompany->getId()) ? '/home/dashboard' : '/home/dashboard' ?>">
+            <img alt="<?= $this->translate('Application Name') ?>" src="<?= $this->defaultCompany ? ( $this->defaultCompany->getAlternativeImage() ? $this->defaultCompany->getAlternativeImage()->getUrl() : ($this->defaultCompany->getImage() ? $this->defaultCompany->getImage()->getUrl() : $this->default_company_logo) ) : $this->default_company_logo ?>">
+        </a>
+        <button type="button" class="sidebar-toggle">
+            <i class="fa fa-times"></i>
+        </button>
+    </div>        
+    <div class="sidebar-menu">        
+        <ul class="sidebar-nav">
+            <?php if ($this->defaultCompany && $this->userModel->getUserCompany() && $this->userModel->getUserCompany()->getId() === $this->defaultCompany->getId()) { ?>
+                <?php foreach ($this->_menuModel->getPagesFromPeople(true) AS $menu) { ?>
+                    <li class="<?= ($menu['pages']) ? 'dropdown' : '' ?> <?= $this->module_name == strtolower($menu['label']) ? 'active' : '' ?>">
+                        <a href="<?= $menu['uri'] ?>" class="<?= ($menu['pages']) ? 'dropdown-toggle' : '' ?>" <?= ($menu['pages']) ? 'data-toggle="dropdown"' : '' ?>>
+                            <div class="icon">
+                                <i class="<?= $menu['icon_class'] ?>" aria-hidden="true"></i>
+                            </div>
+                            <div id="menu-<?= $menu['id'] ?>" class="title"><?= $menu['label'] ?></div>
+                        </a>
+                        <?php if ($menu['pages']) { ?>
+                            <div class="dropdown-menu">
+                                <ul>                            
+                                    <li class="section"><i class="<?= $menu['icon_class'] ?>" aria-hidden="true"></i><?= $menu['label'] ?></li>
+                                    <?php foreach ($menu['pages'] AS $submenu) { ?>
+                                        <li><a href="<?= $submenu['uri'] ?>"><?= $submenu['label'] ?></a></li>                                            
+                                    <?php } ?>
+                                </ul>
+                            </div>                    
+                        <?php } ?>
+                    </li>
+                <?php } ?>
+            <?php } else { ?>
+                <?php foreach ($this->_menuModel->getPagesFromPeople(false) AS $menu) { ?>
+                    <li class="<?= ($menu['pages']) ? 'dropdown' : '' ?> <?= $this->module_name == strtolower($menu['label']) ? 'active' : '' ?>">
+                        <a href="<?= $menu['uri'] ?>" class="<?= ($menu['pages']) ? 'dropdown-toggle' : '' ?>" <?= ($menu['pages']) ? 'data-toggle="dropdown"' : '' ?>>
+                            <div class="icon">
+                                <i class="<?= $menu['icon_class'] ?>" aria-hidden="true"></i>
+                            </div>
+                            <div id="menu-<?= $menu['id'] ?>" class="title"><?= $menu['label'] ?></div>
+                        </a>
+                        <?php if ($menu['pages']) { ?>
+                            <div class="dropdown-menu">
+                                <ul>                            
+                                    <li class="section"><i class="<?= $menu['icon_class'] ?>" aria-hidden="true"></i><?= $menu['label'] ?></li>
+                                    <?php foreach ($menu['pages'] AS $submenu) { ?>
+                                        <li><a href="<?= $submenu['uri'] ?>"><?= $submenu['label'] ?></a></li>                                            
+                                    <?php } ?>
+                                </ul>
+                            </div>                    
+                        <?php } ?>
+                    </li>
+                <?php } ?>
+            <?php } ?>
+        </ul>
+    </div>
+    <div class="sidebar-footer">
+        <ul class="menu">
+            <li class="">
+                <a href="/" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                    <i class="fa fa-cogs" aria-hidden="true"></i>
+                </a>
+            </li>
+            <li><a href="#"><span class="flag-icon flag-icon-th flag-icon-squared"></span></a></li>
+        </ul>
+    </div>
+</aside>
+
+<script type="text/ng-template" id="sidebar-dropdown.tpl.html">
+    <div class="dropdown-background">
+    <div class="bg"></div>
+    </div>
+    <div class="dropdown-container">
+    {{list}}
+    </div>
+</script>
+
+<div class="app-container app-logged-in">    
+    <nav class="navbar navbar-default" id="navbar">
+        <div class="container-fluid">
+            <div class="navbar-collapse collapse in">
+                <ul class="nav navbar-nav navbar-mobile">
+                    <li>
+                        <button type="button" class="sidebar-toggle">
+                            <i class="fa fa-bars"></i>
+                        </button>
+                    </li>
+                    <li class="logo">
+                        <a class="navbar-brand" href="<?= ($this->defaultCompany && $this->userModel->getUserCompany() && $this->userModel->getUserCompany()->getId() === $this->defaultCompany->getId()) ? '/home/dashboard' : '/home/dashboard' ?>">
+                            <img height="90%" alt="<?= $this->translate('Application Name') ?>" src="<?= $this->defaultCompany && $this->defaultCompany->getImage() ? $this->defaultCompany->getImage()->getUrl() : $this->default_company_logo ?>">
+                        </a>
+                    </li>
+                    <li>
+                        <button type="button" class="navbar-toggle">                                                                
+                            <img class="profile-img" src="<?= $this->userModel->getLoggedUser()->getPeople()->getImage() ? $this->userModel->getLoggedUser()->getPeople()->getImage()->getUrl() : $this->default_user_image_profile ?>">
+                        </button>
+                    </li>
+                </ul>
+                <ul class="nav navbar-nav navbar-left">
+                    <li class="dropdown notification company-profile">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            <img class="company-img" src="<?= $this->userModel->getUserCompany() && $this->userModel->getUserCompany()->getImage() ? $this->userModel->getUserCompany()->getImage()->getUrl() : $this->default_company_logo ?>">
+                            <div class="title"><?= $this->translate('Companyes') ?></div>
+                        </a>
+                        <?php if (count($this->userModel->getLoggedUser()->getPeople()->getPeopleEmployee()) > 1) { ?>
+                            <div class="dropdown-menu">
+                                <ul class="action">                                                
+                                    <?php foreach ($this->userModel->getLoggedUser()->getPeople()->getPeopleEmployee() AS $company) { ?>
+                                        <?php if ($company->getCompany()->getId() != $this->userModel->getUserCompany()->getId()) { ?>
+                                            <li class="title">
+                                                <a href="<?= $this->basePath('/company/' . $company->getCompany()->getId()) ?>">
+                                                    <img class="company-img-icon" src="<?= $company->getCompany()->getImage() ? $company->getCompany()->getImage()->getUrl() : $this->default_company_logo ?>">
+                                                </a>
+                                            </li>
+                                        <?php } ?>                                                               
+                                    <?php } ?>                                                                                                
+                                </ul>
+                            </div>
+                        <?php } ?>                                                     
+                    </li>
+                    <!--
+                    <li class="navbar-title">Dashboard</li>
+                    <li class="navbar-search hidden-sm">
+                        <input id="search" type="text" placeholder="Search.." autocomplete="off">
+                        <button class="btn-search"><i class="fa fa-search"></i></button>
+                    </li>
+                    -->
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+
+                    <li class="dropdown notification">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            <div class="icon"><i class="fa fa-shopping-basket" aria-hidden="true"></i></div>
+                            <div class="title"><?= $this->translate('New Orders') ?></div>
+                            <?php if ($this->defaultCompany && $this->userModel->getUserCompany() && $this->userModel->getUserCompany()->getId() === $this->defaultCompany->getId()) { ?>
+                                <div class="count"><?= count($this->userModel->getUserCompany()->getSaleOrder()) ?></div>
+                            <?php } else { ?>
+                                <div class="count"><?= count($this->userModel->getUserCompany()->getPurchasingOrder()) ?></div>
+                            <?php } ?>
+
+                        </a>
+                        <div class="dropdown-menu">
+                            <?php if ($this->defaultCompany && $this->userModel->getUserCompany() && $this->userModel->getUserCompany()->getId() === $this->defaultCompany->getId()) { ?>
+                                <ul>
+                                    <li class="dropdown-header"><?= $this->translate('Sale Orders') ?></li>
+                                    <?php if (count($this->userModel->getUserCompany()->getSaleOrder()) > 0) { ?>
+                                        <?php
+                                        $count = 0;
+                                        foreach ($this->userModel->getUserCompany()->getSaleOrder() as $order) {
+                                            if ($count > 5) {
+                                                break;
+                                            } else {
+                                                ?>
+                                                <li>
+                                                    <a href="/sales/order/id/<?= $order->getId() ?>">
+                                                        <span class="badge pull-right"><?= $this->translate('corrency_symbol') . ' ' . number_format($order->getPrice(), 2, ',', '.') ?></span>
+                                                        <div class="message">                                                        
+                                                            <span class="profile">#<?= $order->getId() ?></span>
+                                                            <div class="content">
+                                                                <div class="title"><?= $order->getClient() ? $order->getClient()->getName() : '' ?></div>
+                                                                <div class="description"><?= $this->translate($order->getStatus()->getStatus()) ?></div>
+                                                            </div>
+                                                        </div>
+                                                    </a>
+                                                </li>
+                                                <?php
+                                            }
+                                            $count++;
+                                        }
+                                        ?>
+                                    <?php } else { ?>
+                                        <li class="dropdown-empty"><?= $this->translate('No New Orders') ?></li>
+                                    <?php } ?>
+                                    <li class="dropdown-footer">
+                                        <?php if ($this->defaultCompany && $this->userModel->getUserCompany() && $this->userModel->getUserCompany()->getId() === $this->defaultCompany->getId()) { ?>
+                                            <a href="/sales/order"><?= $this->translate('View All') ?> <i class="fa fa-angle-right" aria-hidden="true"></i></a>
+                                        <?php } else { ?>
+                                            <a href="/purchasing/order"><?= $this->translate('View All') ?> <i class="fa fa-angle-right" aria-hidden="true"></i></a>
+                                        <?php } ?>
+                                    </li>
+                                </ul>
+                            <?php } else { ?>
+                                <ul>
+                                    <li class="dropdown-header"><?= $this->translate('Purchasing Orders') ?></li>
+                                    <?php if (count($this->userModel->getUserCompany()->getPurchasingOrder()) > 0) { ?>
+                                        <?php
+                                        $count = 0;
+                                        foreach ($this->userModel->getUserCompany()->getPurchasingOrder() as $order) {
+                                            if ($count >= 5) {
+                                                break;
+                                            } else {
+                                                ?>
+                                                <li>
+                                                    <a href="/purchasing/order/id/<?= $order->getId() ?>">
+                                                        <span class="badge pull-right"><?= $this->translate('corrency_symbol') . ' ' . number_format($order->getPrice(), 2, ',', '.') ?></span>
+                                                        <div class="message">                                                        
+                                                            <span class="profile">#<?= $order->getId() ?></span>
+                                                            <div class="content">
+                                                                <div class="title"><?=
+                                                                    $order->getProvider() && $this->defaultCompany->getId() == $order->getProvider()->getId() ?
+                                                                            ($order->getQuote() ? $order->getQuote()->getCarrier()->getName() : '') :
+                                                                            ($order->getProvider() ? $order->getProvider()->getName() : '')
+                                                                    ?></div>
+                                                                <div class="description"><?= $this->translate($order->getStatus()->getStatus()) ?></div>
+                                                            </div>
+                                                        </div>
+                                                    </a>
+                                                </li>
+                                                <?php
+                                            }
+                                            $count++;
+                                        }
+                                        ?>
+                                    <?php } else { ?>
+                                        <li class="dropdown-empty"><?= $this->translate('No New Orders') ?></li>
+                                    <?php } ?>
+                                    <li class="dropdown-footer">
+                                        <?php if ($this->defaultCompany && $this->userModel->getUserCompany() && $this->userModel->getUserCompany()->getId() === $this->defaultCompany->getId()) { ?>
+                                            <a href="/sales/order"><?= $this->translate('View All') ?> <i class="fa fa-angle-right" aria-hidden="true"></i></a>
+                                        <?php } else { ?>
+                                            <a href="/purchasing/order"><?= $this->translate('View All') ?> <i class="fa fa-angle-right" aria-hidden="true"></i></a>
+                                        <?php } ?>
+                                    </li>
+                                </ul>
+                            <?php } ?>
+                        </div>
+                    </li>
+                    <!--
+                    <li class="dropdown notification warning">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            <div class="icon"><i class="fa fa-comments" aria-hidden="true"></i></div>
+                            <div class="title">Unread Messages</div>
+                            <div class="count">99</div>
+                        </a>
+                        <div class="dropdown-menu">
+                            <ul>
+                                <li class="dropdown-header">Message</li>
+                                <li>
+                                    <a href="#">
+                                        <span class="badge badge-warning pull-right">10</span>
+                                        <div class="message">
+                                            <img class="profile" src="https://placehold.it/100x100">
+                                            <div class="content">
+                                                <div class="title">"Payment Confirmation.."</div>
+                                                <div class="description">Alan Anderson</div>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#">
+                                        <span class="badge badge-warning pull-right">5</span>
+                                        <div class="message">
+                                            <img class="profile" src="https://placehold.it/100x100">
+                                            <div class="content">
+                                                <div class="title">"Hello World"</div>
+                                                <div class="description">Marco  Harmon</div>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#">
+                                        <span class="badge badge-warning pull-right">2</span>
+                                        <div class="message">
+                                            <img class="profile" src="https://placehold.it/100x100">
+                                            <div class="content">
+                                                <div class="title">"Order Confirmation.."</div>
+                                                <div class="description">Brenda Lawson</div>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </li>
+                                <li class="dropdown-footer">
+                                    <a href="#">View All <i class="fa fa-angle-right" aria-hidden="true"></i></a>
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
+                    <li class="dropdown notification danger">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            <div class="icon"><i class="fa fa-bell" aria-hidden="true"></i></div>
+                            <div class="title">System Notifications</div>
+                            <div class="count">10</div>
+                        </a>
+                        <div class="dropdown-menu">
+                            <ul>
+                                <li class="dropdown-header">Notification</li>
+                                <li>
+                                    <a href="#">
+                                        <span class="badge badge-danger pull-right">8</span>
+                                        <div class="message">
+                                            <div class="content">
+                                                <div class="title">New Order</div>
+                                                <div class="description">$400 total</div>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#">
+                                        <span class="badge badge-danger pull-right">14</span>
+                                        Inbox
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#">
+                                        <span class="badge badge-danger pull-right">5</span>
+                                        Issues Report
+                                    </a>
+                                </li>
+                                <li class="dropdown-footer">
+                                    <a href="#">View All <i class="fa fa-angle-right" aria-hidden="true"></i></a>
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
+                    -->
+                    <li class="dropdown profile">
+                        <a href="<?= $this->basePath('/' . $this->module_name . '/profile') ?>" class="dropdown-toggle">
+                            <img class="profile-img" src="<?= $this->userModel->getLoggedUser()->getPeople()->getImage() ? $this->userModel->getLoggedUser()->getPeople()->getImage()->getUrl() : $this->default_user_image_profile ?>">
+                            <div class="title"><?= $this->translate('Profile') ?></div>
+                        </a>
+                        <div class="dropdown-menu">
+                            <div class="profile-info">                                                                                                
+                                <h4 class="username"><?= $this->userModel->getLoggedUser()->getPeople()->getName(); ?></h4>
+                            </div>
+                            <ul class="action">
+                                <li>
+                                    <a href="<?= $this->basePath('/' . $this->module_name . '/profile') ?>">
+                                        <?= $this->translate('Profile') ?>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="<?= $this->basePath('/' . $this->module_name . '/contact-request') ?>">
+                                        <span class="badge badge-danger pull-right">5</span>
+                                        <?= $this->translate('My Inbox') ?>
+                                    </a>
+                                </li>
+                                <?php if ($this->defaultCompany && $this->userModel->getUserCompany()) { ?>
+                                    <li>
+                                        <a href="<?= $this->basePath('/company') ?>">                                                        
+                                            <?= $this->translate('Company') ?>
+                                        </a>
+                                    </li>
+                                <?php } ?>               
+                                <li>
+                                    <a href="<?= $this->basePath('/' . (in_array(strtolower($this->module_name), array('carrier', 'client', 'company', 'provider', 'salesman')) ? strtolower($this->module_name) : 'user') . '/logout') ?>">                                                        
+                                        <?= $this->translate('Logout') ?>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>                                                          
+    <div class="show-messages row">
+        <!-- This div (class .show-messages) receives all system alerts  -->
+    </div>
+    <?= $this->content; ?>      
+    <footer class="app-footer">         
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="footer-copyright">
+                    Copyright © <?= date('Y') ?> <?= $this->translate('Application Name') ?>
+                </div>
+            </div>
+        </div>
+    </footer>                
+</div>    

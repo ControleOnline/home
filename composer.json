@@ -1,0 +1,20 @@
+{
+    "name": "controleonline/home",
+    "description": "Controle Online - Home Module",
+    "license": "BSD-3-Clause",
+    "keywords": [
+        "Home"
+    ],
+    "autoload": {
+        "psr-4": {
+            "Home\\": "src/Home"
+        },
+        "classmap": [
+            "Module.php"
+        ]
+    },
+    "homepage": "https://github.com/ControleOnline/home",
+    "require": {
+        "controleonline/core": "*"
+    }    
+}
