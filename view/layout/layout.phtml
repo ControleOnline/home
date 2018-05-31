@@ -13,9 +13,9 @@
         <!-- Scripts -->        
         <?= $this->headScript() ?>        
     </head>    
-    <body class="flat-blue" data-js-libs='<?= $this->requireJsLibs ? json_encode($this->requireJsLibs) : '{}' ?>' data-js-files='<?= $this->requireJsFiles ? json_encode($this->requireJsFiles) : '{}' ?>' style="<?= (!$this->userModel->loggedIn()) ? 'margin-top: 0px;' : '' ?>">        
+    <body class="flat-blue <?= $this->forceSimpleLayout ? 'app-simple' : ''; ?>" data-js-libs='<?= $this->requireJsLibs ? json_encode($this->requireJsLibs) : '{}' ?>' data-js-files='<?= $this->requireJsFiles ? json_encode($this->requireJsFiles) : '{}' ?>' style="<?= (!$this->userModel->loggedIn()) ? 'margin-top: 0px;' : '' ?>">        
         <div class="app app-default">                  
-            <?php if ($this->forceNotLoggedInLayout) { ?>
+            <?php if ($this->forceNotLoggedInLayout && !$this->forceSimpleLayout) { ?>
                 <?= $this->render("layout/not-logged-in.phtml"); ?>
             <?php } elseif ($this->userModel->loggedIn() && $this->userModel->getUserCompany() && !$this->forceSimpleLayout) { ?>            
                 <?= $this->render("layout/logged.phtml"); ?>
